@@ -94,11 +94,24 @@ while not done:
         shuttle.velocityx -= 2
     elif pressed[pygame.K_RIGHT] and shuttle.velocityx <= 6:
         shuttle.velocityx += 2
+    else:
+
+        if shuttle.velocityx > 0:
+            shuttle.velocityx -= 2
+        elif shuttle.velocityx < 0:
+            shuttle.velocityx += 2
+
 
     if pressed[pygame.K_UP] and shuttle.velocityy >= -6:
         shuttle.velocityy -= 2
     elif pressed[pygame.K_DOWN] and shuttle.velocityy <= 6:
         shuttle.velocityy += 2
+    else:
+
+        if shuttle.velocityy > 0:
+            shuttle.velocityy -= 2
+        elif shuttle.velocityy < 0:
+            shuttle.velocityy += 2
 
     ## All game objects are updated here
     shuttle.update()
