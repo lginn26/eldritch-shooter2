@@ -44,14 +44,35 @@ class PlayerBullet(pygame.sprite.Sprite):
     def __init__(self, x, y, velocityx, velocityy, duration=True):
         super().__init__()
 
-        if velocityx == 0:
+        '''if velocityx == 0:
             self.image = pl_bullet_ud
         elif velocityx > 0:
-            self.image = pl_bullet_dr
-        elif velocityx < 0:
             self.image = pl_bullet_dl
+        elif velocityx < 0:
+            self.image = pl_bullet_dr
         elif velocityy == 0:
-            self.image = pl_bullet_lr
+            self.image = pl_bullet_lr'''
+
+        if velocityy > 0:
+            if velocityx == 0:
+                self.image = pl_bullet_ud
+            elif velocityx > 0:
+                self.image = pl_bullet_dr
+            elif velocityx < 0:
+                self.image = pl_bullet_dl
+            elif velocityy == 0:
+                self.image = pl_bullet_lr
+
+        if velocityy < 0:
+            if velocityx == 0:
+                self.image = pl_bullet_ud
+            elif velocityx > 0:
+                self.image = pl_bullet_dl
+            elif velocityx < 0:
+                self.image = pl_bullet_dr
+            elif velocityy == 0:
+                self.image = pl_bullet_lr
+
 
         self.rect = self.image.get_rect()
         self.rect.x = x
@@ -110,8 +131,8 @@ class Shuttle(pygame.sprite.Sprite):
 
         hyp = math.sqrt(xdirr ** 2 + ydirr ** 2)
 
-        xvector = (xdirr / hyp) * 2
-        yvector = (ydirr / hyp) * 2
+        xvector = (xdirr / hyp) * 10
+        yvector = (ydirr / hyp) * 10
 
         return [xvector, yvector]
 
