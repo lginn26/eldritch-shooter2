@@ -47,16 +47,27 @@ class Shuttle(pygame.sprite.Sprite):
 
         self.health = 3
 
-        self.vectorx = 0
-        self.vectory = 0
-
         self.velocityx = 0
         self.velocityy = 0
 
-# Core Functions
+    def set_image(self):
+        pass
+
+    def update(self):
+        self.rect.x += self.velocityx
+        self.rect.y += self.velocityy
+
+# Functions
+
+## Helper Functions
+
+def status():
+    print(str(shuttle.velocityx) + " " + str(shuttle.velocityy))
+
+## Core Functions
 
 def setup():
-    global player
+    global shuttle, player
 
     shuttle = Shuttle(400, 300, player0)
 
@@ -76,6 +87,21 @@ while not done:
 
     # Game logic (Check for collisions, update points, etc.)
 
+    ## Player controls the ship here
+    pressed = pygame.key.get_pressed()
+
+    if pressed[pygame.K_LEFT] and shuttle.velocityx >= -6:
+        shuttle.velocityx -= 2
+    elif pressed[pygame.K_RIGHT] and shuttle.velocityx <= 6:
+        shuttle.velocityx += 2
+
+    if pressed[pygame.K_UP] and shuttle.velocityy >= -6:
+        shuttle.velocityy -= 2
+    elif pressed[pygame.K_DOWN] and shuttle.velocityy <= 6:
+        shuttle.velocityy += 2
+
+    ## All game objects are updated here
+    shuttle.update()
 
     # Drawing code (Describe the picture. It isn't actually drawn yet.)
     screen.fill(WHITE)
