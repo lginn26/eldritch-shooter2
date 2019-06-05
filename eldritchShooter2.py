@@ -53,24 +53,24 @@ class PlayerBullet(pygame.sprite.Sprite):
         elif velocityy == 0:
             self.image = pl_bullet_lr'''
 
-        if velocityy > 0:
-            if velocityx == 0:
+        if velocityy >= 0:
+            if -2 < velocityx < 2:
                 self.image = pl_bullet_ud
             elif velocityx > 0:
                 self.image = pl_bullet_dr
             elif velocityx < 0:
                 self.image = pl_bullet_dl
-            elif velocityy == 0:
+            elif -2 < velocityy < 2:
                 self.image = pl_bullet_lr
 
         if velocityy < 0:
-            if velocityx == 0:
+            if -2 < velocityx < 2:
                 self.image = pl_bullet_ud
             elif velocityx > 0:
                 self.image = pl_bullet_dl
             elif velocityx < 0:
                 self.image = pl_bullet_dr
-            elif velocityy == 0:
+            elif -2 < velocityy < 2:
                 self.image = pl_bullet_lr
 
 
