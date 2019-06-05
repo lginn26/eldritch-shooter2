@@ -5,9 +5,9 @@ import random
 
 # Load Images
 player0 = pygame.image.load("assets/images/player_rotate_testsprite0.png")
-player90 = pygame.image.load("assets/images/player_rotate_testsprite90.png")
+player270 = pygame.image.load("assets/images/player_rotate_testsprite90.png")
 player180 = pygame.image.load("assets/images/player_rotate_testsprite180.png")
-player270 = pygame.image.load("assets/images/player_rotate_testsprite270.png")
+player90 = pygame.image.load("assets/images/player_rotate_testsprite270.png")
 
 # Initialize game engine
 pygame.init()
@@ -50,12 +50,27 @@ class Shuttle(pygame.sprite.Sprite):
         self.velocityx = 0
         self.velocityy = 0
 
+    def get_angle(self):
+        mouse_pos = pygame.mouse.get_pos()
+        vectorx = mouse_pos[0] - self.rect.x
+        vectory = self.rect.y - mouse_pos[1]
+
+        return ((math.atan2(vectory, vectorx)) * (180/math.pi))
+
     def set_image(self):
-        pass
+        if 135 > self.get_angle() > 45:
+            self.image = player0
+        elif 180 > self.get_angle() > 135 or -180 < self.get_angle() < -135:
+            self.image = player90
+        elif -135 < self.get_angle() < -45:
+            self.image = player180
+        elif 45 > self.get_angle() > -45:
+            self.image = player270
 
     def update(self):
         self.rect.x += self.velocityx
         self.rect.y += self.velocityy
+        self.set_image()
 
 # Functions
 
