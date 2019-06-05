@@ -9,6 +9,11 @@ player270 = pygame.image.load("assets/images/player_rotate_testsprite90.png")
 player180 = pygame.image.load("assets/images/player_rotate_testsprite180.png")
 player90 = pygame.image.load("assets/images/player_rotate_testsprite270.png")
 
+pl_bullet_ud = pygame.image.load("assets/images/bullet_testsprite_updown.png")
+pl_bullet_lr = pygame.image.load("assets/images/bullet_testsprite_leftright.png")
+pl_bullet_dl = pygame.image.load("assets/images/bullet_testsprite_diagonalleft.png")
+pl_bullet_dr = pygame.image.load("assets/images/bullet_testsprite_diagonalright.png")
+
 # Initialize game engine
 pygame.init()
 
@@ -31,6 +36,44 @@ BLACK = (0, 0, 0)
 ORANGE = (255, 125, 0)
 
 # Game Classes
+
+## Bullet Classes
+
+class PlayerBullet(pygame.sprite.Sprite):
+
+    def __init__(self, x, y, velocityx, velocityy, duration=True):
+        super().__init__()
+
+        if velocityx == 0:
+            self.image = pl_bullet_ud
+        elif velocityx > 0:
+            self.image = pl_bullet_dr
+        elif velocityx < 0:
+            self.image = pl_bullet_dl
+        elif velocityy == 0:
+            self.image = pl_bullet_lr
+
+        self.rect = self.image.get_rect()
+        self.rect.x = x
+        self.rect.y = y
+
+        self.velocityx = velocityx
+        self.velocityy = velocityy
+
+        self.duration = duration
+
+    def update(self):
+        ### Move Bullet
+
+        self.rect.x += self.velocityx
+        self.rect.y += self.velocityy
+
+        ### Kill instance at screen edge
+        if self.rect.right > SIZE[0] or self.rect.left < 0:
+            self.kill()
+
+        if self.rect.bottom > SIZE[1] or self.rect.top < 0:
+            self.kill()
 
 ## Main Player Class
 
@@ -57,6 +100,28 @@ class Shuttle(pygame.sprite.Sprite):
 
         return ((math.atan2(vectory, vectorx)) * (180/math.pi))
 
+    def get_vector(self):
+        mouse_pos = pygame.mouse.get_pos()
+
+        # Get Hypotenus
+
+        xdirr = self.rect.centerx - mouse_pos[0]
+        ydirr = self.rect.centery - mouse_pos[1]
+
+        hyp = math.sqrt(xdirr ** 2 + ydirr ** 2)
+
+        xvector = (xdirr / hyp) * 2
+        yvector = (ydirr / hyp) * 2
+
+        return [xvector, yvector]
+
+    def fire(self):
+        vector = self.get_vector()
+
+        bullet = PlayerBullet(self.rect.centerx, self.rect.centery, -vector[0], -vector[1])
+
+        playerbullets.add(bullet)
+
     def set_image(self):
         if 135 > self.get_angle() > 45:
             self.image = player0
@@ -73,15 +138,15 @@ class Shuttle(pygame.sprite.Sprite):
         self.rect.x += self.velocityx
         self.rect.y += self.velocityy
 
-        ### Set it's image based on previous events
-        self.set_image()
-
         ### Keep within screen boundries
         if self.rect.right > SIZE[0] or self.rect.left < 0:
             self.rect.x -= self.velocityx
 
         if self.rect.bottom > SIZE[1] or self.rect.top < 0:
             self.rect.y -= self.velocityy
+
+        ### Set it's image based on previous events
+        self.set_image()
 
 # Functions
 
@@ -93,12 +158,17 @@ def status():
 ## Core Functions
 
 def setup():
-    global shuttle, player
+    global shuttle, player, playerbullets
+
+    # Creates and adds a instance of Shuttle
 
     shuttle = Shuttle(400, 300, player0)
 
     player = pygame.sprite.GroupSingle()
     player.add(shuttle)
+
+    # Stores instances of PlayerBullet
+    playerbullets = pygame.sprite.Group()
 
 # Game loop
 done = False
@@ -111,7 +181,16 @@ while not done:
         if event.type == pygame.QUIT:
             done = True
 
+
+
     # Game logic (Check for collisions, update points, etc.)
+
+    ## Player fires
+
+    leftmouse_click = (1, 0, 0)
+
+    if pygame.mouse.get_pressed() == leftmouse_click:
+        shuttle.fire()
 
     ## Player controls the ship here
     pressed = pygame.key.get_pressed()
@@ -141,10 +220,12 @@ while not done:
 
     ## All game objects are updated here
     shuttle.update()
+    playerbullets.update()
 
     # Drawing code (Describe the picture. It isn't actually drawn yet.)
     screen.fill(WHITE)
     player.draw(screen)
+    playerbullets.draw(screen)
 
     # Update screen (Actually draw the picture in the window.)
     pygame.display.flip()
