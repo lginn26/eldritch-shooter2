@@ -105,9 +105,9 @@ while not done:
     ## Player controls the ship here
     pressed = pygame.key.get_pressed()
 
-    if pressed[pygame.K_LEFT] and shuttle.velocityx >= -6:
+    if pressed[pygame.K_a] and shuttle.velocityx >= -6:
         shuttle.velocityx -= 2
-    elif pressed[pygame.K_RIGHT] and shuttle.velocityx <= 6:
+    elif pressed[pygame.K_d] and shuttle.velocityx <= 6:
         shuttle.velocityx += 2
     else:
 
@@ -117,9 +117,9 @@ while not done:
             shuttle.velocityx += 2
 
 
-    if pressed[pygame.K_UP] and shuttle.velocityy >= -6:
+    if pressed[pygame.K_w] and shuttle.velocityy >= -6:
         shuttle.velocityy -= 2
-    elif pressed[pygame.K_DOWN] and shuttle.velocityy <= 6:
+    elif pressed[pygame.K_s] and shuttle.velocityy <= 6:
         shuttle.velocityy += 2
     else:
 
