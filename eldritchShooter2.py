@@ -68,9 +68,20 @@ class Shuttle(pygame.sprite.Sprite):
             self.image = player270
 
     def update(self):
+        ### Move Shuttle
+
         self.rect.x += self.velocityx
         self.rect.y += self.velocityy
+
+        ### Set it's image based on previous events
         self.set_image()
+
+        ### Keep within screen boundries
+        if self.rect.right > SIZE[0] or self.rect.left < 0:
+            self.rect.x -= self.velocityx
+
+        if self.rect.bottom > SIZE[1] or self.rect.top < 0:
+            self.rect.y -= self.velocityy
 
 # Functions
 
