@@ -279,7 +279,7 @@ def setup():
 
     enemylist = [
         BasicEnemy(100, 100, enemy_testsprite),
-        BasicEnemy(200, 200, enemy_testsprite),
+        DriftingEnemy(200, 200, enemy_testsprite),
         BasicEnemy(300, 300, enemy_testsprite)
     ]
     enemies = pygame.sprite.Group()
