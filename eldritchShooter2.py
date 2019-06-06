@@ -52,16 +52,88 @@ class BasicEnemy(pygame.sprite.Sprite):
         self.health = 3
         self.firecooldown = 0
 
-        self.velocityx = 0
-        self.velocityy = 0
+    def get_vector(self):
+        player_pos = (shuttle.rect.x+25, shuttle.rect.y+25)
+
+        # Get Hypotenus
+
+        xdirr = self.rect.centerx - player_pos[0]
+        ydirr = self.rect.centery - player_pos[1]
+
+        hyp = math.sqrt(xdirr ** 2 + ydirr ** 2)
+
+        try:
+            xvector = (xdirr / hyp) * 2
+            yvector = (ydirr / hyp) * 2
+
+            return [xvector, yvector]
+
+        except ZeroDivisionError:
+            return [0, 0]
+
+
+
 
     def update(self):
+        # Find the player and determine direction to travel in
 
+        # Move instances
+        self.rect.x -= self.get_vector()[0]
+        self.rect.y -= self.get_vector()[1]
+
+        # Will be killed if instances of playerbullets collide with instances
         hit_list = pygame.sprite.spritecollide(self, playerbullets, True, pygame.sprite.collide_mask)
 
         if len(hit_list) > 0:
             self.kill()
 
+class DriftingEnemy(pygame.sprite.Sprite):
+
+    def __init__(self, x, y, image):
+        super().__init__()
+
+        self.image = image
+
+        self.rect = self.image.get_rect()
+        self.rect.x = x
+        self.rect.y = y
+
+        self.health = 3
+        self.firecooldown = 0
+
+        self.velocityx = 0
+        self.velocityy = 0
+
+    def get_vector(self):
+        player_pos = (shuttle.rect.x, shuttle.rect.y)
+
+        # Get Hypotenus
+
+        xdirr = self.rect.centerx - player_pos[0]
+        ydirr = self.rect.centery - player_pos[1]
+
+        hyp = math.sqrt(xdirr ** 2 + ydirr ** 2)
+
+        xvector = (xdirr / hyp) * .3
+        yvector = (ydirr / hyp) * .3
+
+        return [xvector, yvector]
+
+    def update(self):
+        # Find the player and determine direction to travel in
+        self.velocityx -= self.get_vector()[0]
+        self.velocityy -= self.get_vector()[1]
+
+        # Move instances
+        self.rect.x += self.velocityx
+
+        self.rect.y += self.velocityy
+
+        # Will be killed if instances of playerbullets collide with instances
+        hit_list = pygame.sprite.spritecollide(self, playerbullets, True, pygame.sprite.collide_mask)
+
+        if len(hit_list) > 0:
+            self.kill()
 ## Bullet Classes
 
 class PlayerBullet(pygame.sprite.Sprite):
@@ -79,6 +151,7 @@ class PlayerBullet(pygame.sprite.Sprite):
         self.velocityy = velocityy
 
         self.duration = duration
+
 
     def update(self):
         ### Move Bullet
