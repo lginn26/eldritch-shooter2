@@ -9,10 +9,7 @@ player270 = pygame.image.load("assets/images/player_rotate_testsprite90.png")
 player180 = pygame.image.load("assets/images/player_rotate_testsprite180.png")
 player90 = pygame.image.load("assets/images/player_rotate_testsprite270.png")
 
-pl_bullet_ud = pygame.image.load("assets/images/bullet_testsprite_updown.png")
-pl_bullet_lr = pygame.image.load("assets/images/bullet_testsprite_leftright.png")
-pl_bullet_dl = pygame.image.load("assets/images/bullet_testsprite_diagonalleft.png")
-pl_bullet_dr = pygame.image.load("assets/images/bullet_testsprite_diagonalright.png")
+test_bull = pygame.image.load("assets/images/test_bullet.png")
 
 # Initialize game engine
 pygame.init()
@@ -44,35 +41,7 @@ class PlayerBullet(pygame.sprite.Sprite):
     def __init__(self, x, y, velocityx, velocityy, duration=True):
         super().__init__()
 
-        '''if velocityx == 0:
-            self.image = pl_bullet_ud
-        elif velocityx > 0:
-            self.image = pl_bullet_dl
-        elif velocityx < 0:
-            self.image = pl_bullet_dr
-        elif velocityy == 0:
-            self.image = pl_bullet_lr'''
-
-        if velocityy >= 0:
-            if -2 < velocityx < 2:
-                self.image = pl_bullet_ud
-            elif velocityx > 0:
-                self.image = pl_bullet_dr
-            elif velocityx < 0:
-                self.image = pl_bullet_dl
-            elif -2 < velocityy < 2:
-                self.image = pl_bullet_lr
-
-        if velocityy < 0:
-            if -2 < velocityx < 2:
-                self.image = pl_bullet_ud
-            elif velocityx > 0:
-                self.image = pl_bullet_dl
-            elif velocityx < 0:
-                self.image = pl_bullet_dr
-            elif -2 < velocityy < 2:
-                self.image = pl_bullet_lr
-
+        self.image = test_bull
 
         self.rect = self.image.get_rect()
         self.rect.x = x
@@ -110,6 +79,7 @@ class Shuttle(pygame.sprite.Sprite):
         self.rect.y = y
 
         self.health = 3
+        self.firecooldown = 0
 
         self.velocityx = 0
         self.velocityy = 0
@@ -139,9 +109,19 @@ class Shuttle(pygame.sprite.Sprite):
     def fire(self):
         vector = self.get_vector()
 
-        bullet = PlayerBullet(self.rect.centerx, self.rect.centery, -vector[0], -vector[1])
+        if 135 > self.get_angle() > 45:
+            bullet = PlayerBullet(self.rect.centerx - 10, self.rect.top, -vector[0], -vector[1])
+        elif 180 > self.get_angle() > 135 or -180 < self.get_angle() < -135:
+            bullet = PlayerBullet(self.rect.left, self.rect.centery - 10, -vector[0], -vector[1])
+        elif -135 < self.get_angle() < -45:
+            bullet = PlayerBullet(self.rect.centerx - 10, self.rect.bottom, -vector[0], -vector[1])
+        elif 45 > self.get_angle() > -45:
+            bullet = PlayerBullet(self.rect.right, self.rect.centery - 10, -vector[0], -vector[1])
+
+        #bullet = PlayerBullet(self.rect.centerx, self.rect.centery, -vector[0], -vector[1])
 
         playerbullets.add(bullet)
+        self.firecooldown = 15
 
     def set_image(self):
         if 135 > self.get_angle() > 45:
@@ -158,6 +138,10 @@ class Shuttle(pygame.sprite.Sprite):
 
         self.rect.x += self.velocityx
         self.rect.y += self.velocityy
+
+        ## Reduce fire cooldown
+        if self.firecooldown > 0:
+            self.firecooldown -= 1
 
         ### Keep within screen boundries
         if self.rect.right > SIZE[0] or self.rect.left < 0:
@@ -210,7 +194,7 @@ while not done:
 
     leftmouse_click = (1, 0, 0)
 
-    if pygame.mouse.get_pressed() == leftmouse_click:
+    if pygame.mouse.get_pressed() == leftmouse_click and shuttle.firecooldown == 0:
         shuttle.fire()
 
     ## Player controls the ship here
