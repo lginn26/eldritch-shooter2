@@ -278,7 +278,7 @@ while not done:
     enemies.draw(screen)
 
 
-    # Update screen (Actually draw the picture in the window.)
+    # Update screen (Actually drasaw the picture in the window.)
     pygame.display.flip()
 
     # Limit refresh rate of game loop
