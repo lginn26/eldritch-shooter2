@@ -117,6 +117,8 @@ class Shuttle(pygame.sprite.Sprite):
             bullet = PlayerBullet(self.rect.centerx - 10, self.rect.bottom, -vector[0], -vector[1])
         elif 45 > self.get_angle() > -45:
             bullet = PlayerBullet(self.rect.right, self.rect.centery - 10, -vector[0], -vector[1])
+        else:
+            bullet = PlayerBullet(self.rect.centerx, self.rect.centery - 10, -vector[0], -vector[1])
 
         #bullet = PlayerBullet(self.rect.centerx, self.rect.centery, -vector[0], -vector[1])
 
