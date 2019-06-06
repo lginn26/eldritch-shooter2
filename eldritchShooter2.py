@@ -36,6 +36,19 @@ ORANGE = (255, 125, 0)
 
 # Game Classes
 
+## Tiles
+
+class Tile(pygame.sprite.Sprite):
+    def __init__(self, x, y, ttype, image):
+        super().__init__()
+
+        self.image = image
+
+        self.rect = self.image.get_rect()
+        self.rect.x = x
+        self.rect.y = y
+
+
 ## Enemies
 
 class BasicEnemy(pygame.sprite.Sprite):
@@ -129,11 +142,21 @@ class DriftingEnemy(pygame.sprite.Sprite):
 
         self.rect.y += self.velocityy
 
+        ### Keep within screen boundries
+        if self.rect.right > SIZE[0] or self.rect.left < 0:
+            self.rect.x -= self.velocityx
+            self.velocityx = 0
+
+        if self.rect.bottom > SIZE[1] or self.rect.top < 0:
+            self.rect.y -= self.velocityy
+            self.velocityy = 0
+
         # Will be killed if instances of playerbullets collide with instances
         hit_list = pygame.sprite.spritecollide(self, playerbullets, True, pygame.sprite.collide_mask)
 
         if len(hit_list) > 0:
             self.kill()
+
 ## Bullet Classes
 
 class PlayerBullet(pygame.sprite.Sprite):
