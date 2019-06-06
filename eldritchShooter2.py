@@ -11,6 +11,8 @@ player90 = pygame.image.load("assets/images/player_rotate_testsprite270.png")
 
 test_bull = pygame.image.load("assets/images/test_bullet.png")
 
+enemy_testsprite = pygame.image.load("assets/images/enemy_testsprite.png")
+
 # Initialize game engine
 pygame.init()
 
@@ -33,6 +35,32 @@ BLACK = (0, 0, 0)
 ORANGE = (255, 125, 0)
 
 # Game Classes
+
+## Enemies
+
+class BasicEnemy(pygame.sprite.Sprite):
+
+    def __init__(self, x, y, image):
+        super().__init__()
+
+        self.image = image
+
+        self.rect = self.image.get_rect()
+        self.rect.x = x
+        self.rect.y = y
+
+        self.health = 3
+        self.firecooldown = 0
+
+        self.velocityx = 0
+        self.velocityy = 0
+
+    def update(self):
+
+        hit_list = pygame.sprite.spritecollide(self, playerbullets, True, pygame.sprite.collide_mask)
+
+        if len(hit_list) > 0:
+            self.kill()
 
 ## Bullet Classes
 
@@ -165,7 +193,7 @@ def status():
 ## Core Functions
 
 def setup():
-    global shuttle, player, playerbullets
+    global shuttle, player, enemies, playerbullets
 
     # Creates and adds a instance of Shuttle
 
@@ -173,6 +201,19 @@ def setup():
 
     player = pygame.sprite.GroupSingle()
     player.add(shuttle)
+
+    # Create Enemies and adds them to a sprite group
+
+    enemylist = [
+        BasicEnemy(100, 100, enemy_testsprite),
+        BasicEnemy(200, 200, enemy_testsprite),
+        BasicEnemy(300, 300, enemy_testsprite)
+    ]
+    enemies = pygame.sprite.Group()
+
+    for enemy in enemylist:
+        enemies.add(enemy)
+
 
     # Stores instances of PlayerBullet
     playerbullets = pygame.sprite.Group()
@@ -228,11 +269,14 @@ while not done:
     ## All game objects are updated here
     shuttle.update()
     playerbullets.update()
+    enemies.update()
 
     # Drawing code (Describe the picture. It isn't actually drawn yet.)
     screen.fill(WHITE)
     player.draw(screen)
     playerbullets.draw(screen)
+    enemies.draw(screen)
+
 
     # Update screen (Actually draw the picture in the window.)
     pygame.display.flip()
