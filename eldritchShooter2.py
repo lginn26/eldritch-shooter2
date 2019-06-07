@@ -13,6 +13,8 @@ test_bull = pygame.image.load("assets/images/test_bullet.png")
 
 enemy_testsprite = pygame.image.load("assets/images/enemy_testsprite.png")
 
+test_tile = pygame.image.load("assets/images/test_tile.png")
+
 # Initialize game engine
 pygame.init()
 
@@ -45,8 +47,10 @@ class Tile(pygame.sprite.Sprite):
         self.image = image
 
         self.rect = self.image.get_rect()
-        self.rect.x = x
-        self.rect.y = y
+        self.rect.x = x * 50
+        self.rect.y = y * 50
+
+        self.ttype = ttype
 
 
 ## Enemies
@@ -276,6 +280,16 @@ class Shuttle(pygame.sprite.Sprite):
         if self.rect.bottom > SIZE[1] or self.rect.top < 0:
             self.rect.y -= self.velocityy
 
+        ### Proccess Colisions with tile instances
+        hit_list = pygame.sprite.spritecollide(self, tiles, False)
+
+        for hit in hit_list:
+            if self.rect.right > hit.rect.left or self.rect.left < hit.rect.right:
+                self.rect.x -= self.velocityx
+
+            if self.rect.bottom > hit.rect.top or self.rect.top < hit.rect.bottom:
+                self.rect.y -= self.velocityy
+
         ### Set it's image based on previous events
         self.set_image()
 
@@ -283,13 +297,24 @@ class Shuttle(pygame.sprite.Sprite):
 
 ## Helper Functions
 
+def draw_grid(scale, color, width=SIZE[0], height=SIZE[1]):
+    '''
+    Draws a grid that can overlay your picture.
+    This should make it easier to figure out coordinates
+    when drawing pictures.
+    '''
+    for x in range(0, width, scale):
+        pygame.draw.line(screen, color, [x, 0], [x, height], 1)
+    for y in range(0, height, scale):
+        pygame.draw.line(screen, color, [0, y], [width, y], 1)
+
 def status():
     print(str(shuttle.velocityx) + " " + str(shuttle.velocityy))
 
 ## Core Functions
 
 def setup():
-    global shuttle, player, enemies, playerbullets
+    global shuttle, player, enemies, playerbullets, tiles
 
     # Creates and adds a instance of Shuttle
 
@@ -301,18 +326,26 @@ def setup():
     # Create Enemies and adds them to a sprite group
 
     enemylist = [
-        BasicEnemy(100, 100, enemy_testsprite),
-        DriftingEnemy(200, 200, enemy_testsprite),
-        BasicEnemy(300, 300, enemy_testsprite)
+
     ]
     enemies = pygame.sprite.Group()
 
     for enemy in enemylist:
         enemies.add(enemy)
 
-
     # Stores instances of PlayerBullet
     playerbullets = pygame.sprite.Group()
+
+    # Creates instances of Tile
+
+    tilelist = [
+        Tile(8, 5, "solid", test_tile)
+    ]
+
+    tiles = pygame.sprite.Group()
+
+    for tile in tilelist:
+        tiles.add(tile)
 
 # Game loop
 done = False
@@ -369,9 +402,11 @@ while not done:
 
     # Drawing code (Describe the picture. It isn't actually drawn yet.)
     screen.fill(WHITE)
+    draw_grid(50, BLACK)
     player.draw(screen)
     playerbullets.draw(screen)
     enemies.draw(screen)
+    tiles.draw(screen)
 
 
     # Update screen (Actually drasaw the picture in the window.)
