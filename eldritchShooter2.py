@@ -155,6 +155,19 @@ class DriftingEnemy(pygame.sprite.Sprite):
             self.rect.y -= self.velocityy
             self.velocityy = 0
 
+        ### Handle collisions with tiles
+        hit_list = pygame.sprite.spritecollide(self, tiles, False)
+
+        for hit in hit_list:
+            if self.velocityx > 0:
+                self.rect.right = hit.rect.left
+            elif self.velocityx < 0:
+                self.rect.left = hit.rect.right
+            elif self.velocityy > 0:
+                self.rect.bottom = hit.rect.top
+            elif self.velocityy < 0:
+                self.rect.top = hit.rect.bottom
+
         # Will be killed if instances of playerbullets collide with instances
         hit_list = pygame.sprite.spritecollide(self, playerbullets, True, pygame.sprite.collide_mask)
 
@@ -284,11 +297,13 @@ class Shuttle(pygame.sprite.Sprite):
         hit_list = pygame.sprite.spritecollide(self, tiles, False)
 
         for hit in hit_list:
-            if self.rect.right > hit.rect.left or self.rect.left < hit.rect.right:
+            if self.rect.left < hit.rect.right or self.rect.right > hit.rect.left:
                 self.rect.x -= self.velocityx
+                self.velocityx = 0
 
             if self.rect.bottom > hit.rect.top or self.rect.top < hit.rect.bottom:
                 self.rect.y -= self.velocityy
+                self.velocityy = 0
 
         ### Set it's image based on previous events
         self.set_image()
@@ -339,7 +354,50 @@ def setup():
     # Creates instances of Tile
 
     tilelist = [
-        Tile(8, 5, "solid", test_tile)
+        Tile(0, 0, "solid", test_tile),
+        Tile(0, 1, "solid", test_tile),
+        Tile(0, 2, "solid", test_tile),
+        Tile(0, 3, "solid", test_tile),
+        Tile(0, 8, "solid", test_tile),
+        Tile(0, 9, "solid", test_tile),
+        Tile(0, 10, "solid", test_tile),
+        Tile(0, 11, "solid", test_tile),
+        Tile(15, 0, "solid", test_tile),
+        Tile(15, 1, "solid", test_tile),
+        Tile(15, 2, "solid", test_tile),
+        Tile(15, 3, "solid", test_tile),
+        Tile(15, 8, "solid", test_tile),
+        Tile(15, 9, "solid", test_tile),
+        Tile(15, 10, "solid", test_tile),
+        Tile(15, 11, "solid", test_tile),
+        Tile(1, 0, "solid", test_tile),
+        Tile(2, 0, "solid", test_tile),
+        Tile(3, 0, "solid", test_tile),
+        Tile(4, 0, "solid", test_tile),
+        Tile(5, 0, "solid", test_tile),
+        Tile(6, 0, "solid", test_tile),
+        Tile(7, 0, "solid", test_tile),
+        Tile(8, 0, "solid", test_tile),
+        Tile(9, 0, "solid", test_tile),
+        Tile(10, 0, "solid", test_tile),
+        Tile(11, 0, "solid", test_tile),
+        Tile(12, 0, "solid", test_tile),
+        Tile(13, 0, "solid", test_tile),
+        Tile(14, 0, "solid", test_tile),
+        Tile(1, 11, "solid", test_tile),
+        Tile(2, 11, "solid", test_tile),
+        Tile(3, 11, "solid", test_tile),
+        Tile(4, 11, "solid", test_tile),
+        Tile(5, 11, "solid", test_tile),
+        Tile(6, 11, "solid", test_tile),
+        Tile(7, 11, "solid", test_tile),
+        Tile(8, 11, "solid", test_tile),
+        Tile(9, 11, "solid", test_tile),
+        Tile(10, 11, "solid", test_tile),
+        Tile(11, 11, "solid", test_tile),
+        Tile(12, 11, "solid", test_tile),
+        Tile(13, 11, "solid", test_tile),
+        Tile(14, 11, "solid", test_tile),
     ]
 
     tiles = pygame.sprite.Group()
