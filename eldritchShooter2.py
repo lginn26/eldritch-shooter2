@@ -159,14 +159,13 @@ class DriftingEnemy(pygame.sprite.Sprite):
         hit_list = pygame.sprite.spritecollide(self, tiles, False)
 
         for hit in hit_list:
-            if self.velocityx > 0:
-                self.rect.right = hit.rect.left
-            elif self.velocityx < 0:
-                self.rect.left = hit.rect.right
-            elif self.velocityy > 0:
-                self.rect.bottom = hit.rect.top
-            elif self.velocityy < 0:
-                self.rect.top = hit.rect.bottom
+            if self.rect.left < hit.rect.right or self.rect.right > hit.rect.left:
+                self.rect.x -= self.velocityx
+                self.velocityx = 0
+
+            if self.rect.bottom > hit.rect.top or self.rect.top < hit.rect.bottom:
+                self.rect.y -= self.velocityy
+                self.velocityy = 0
 
         # Will be killed if instances of playerbullets collide with instances
         hit_list = pygame.sprite.spritecollide(self, playerbullets, True, pygame.sprite.collide_mask)
@@ -341,7 +340,7 @@ def setup():
     # Create Enemies and adds them to a sprite group
 
     enemylist = [
-
+        DriftingEnemy(100, 100, enemy_testsprite)
     ]
     enemies = pygame.sprite.Group()
 
