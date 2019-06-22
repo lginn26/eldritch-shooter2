@@ -124,7 +124,7 @@ class DriftingEnemy(pygame.sprite.Sprite):
     def get_vector(self):
         player_pos = (shuttle.rect.x, shuttle.rect.y)
 
-        # Get Hypotenus
+        ### Get Hypotenus
 
         xdirr = self.rect.centerx - player_pos[0]
         ydirr = self.rect.centery - player_pos[1]
@@ -137,11 +137,11 @@ class DriftingEnemy(pygame.sprite.Sprite):
         return [xvector, yvector]
 
     def update(self):
-        # Find the player and determine direction to travel in
+        ### Find the player and determine direction to travel in
         self.velocityx -= self.get_vector()[0]
         self.velocityy -= self.get_vector()[1]
 
-        # Move instances
+        ### Move instances
         self.rect.x += self.velocityx
 
         self.rect.y += self.velocityy
@@ -156,18 +156,18 @@ class DriftingEnemy(pygame.sprite.Sprite):
             self.velocityy = 0
 
         ### Handle collisions with tiles
-        hit_list = pygame.sprite.spritecollide(self, tiles, False)
+        hit_list = pygame.sprite.spritecollide(self, tiles, False, collided=pygame.sprite.collide_rect)
 
         for hit in hit_list:
-            if self.rect.left < hit.rect.right or self.rect.right > hit.rect.left:
+            if self.rect.left >= hit.rect.right or self.rect.right >= hit.rect.left:
                 self.rect.x -= self.velocityx
                 self.velocityx = 0
 
-            if self.rect.bottom > hit.rect.top or self.rect.top < hit.rect.bottom:
+            if self.rect.bottom >= hit.rect.top or self.rect.top <= hit.rect.bottom:
                 self.rect.y -= self.velocityy
                 self.velocityy = 0
 
-        # Will be killed if instances of playerbullets collide with instances
+        ### Will be killed if instances of playerbullets collide with instances
         hit_list = pygame.sprite.spritecollide(self, playerbullets, True, pygame.sprite.collide_mask)
 
         if len(hit_list) > 0:
