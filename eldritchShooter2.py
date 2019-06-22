@@ -168,7 +168,6 @@ class DriftingEnemy(pygame.sprite.Sprite):
                 self.velocityy = 0
 
         ### Will be killed if instances of playerbullets collide with instances
-
         hit_list = pygame.sprite.spritecollide(self, playerbullets, True, pygame.sprite.collide_mask)
 
         if len(hit_list) > 0:
