@@ -122,7 +122,7 @@ class DriftingEnemy(pygame.sprite.Sprite):
         self.velocityy = 0
 
     def get_vector(self):
-        player_pos = (shuttle.rect.x, shuttle.rect.y)
+        player_pos = (shuttle.rect.x , shuttle.rect.y)
 
         ### Get Hypotenus
 
@@ -143,7 +143,6 @@ class DriftingEnemy(pygame.sprite.Sprite):
 
         ### Move instances
         self.rect.x += self.velocityx
-
         self.rect.y += self.velocityy
 
         ### Keep within screen boundries
@@ -159,13 +158,14 @@ class DriftingEnemy(pygame.sprite.Sprite):
         hit_list = pygame.sprite.spritecollide(self, tiles, False, collided=pygame.sprite.collide_rect)
 
         for hit in hit_list:
-            if self.rect.left >= hit.rect.right or self.rect.right >= hit.rect.left:
-                self.rect.x -= self.velocityx
-                self.velocityx = 0
+            if self.rect.top <= hit.rect.bottom or self.rect.bottom >= hit.rect.top:
+                self.rect.y -= self.velocityy - 1
 
-            if self.rect.bottom >= hit.rect.top or self.rect.top <= hit.rect.bottom:
-                self.rect.y -= self.velocityy
-                self.velocityy = 0
+            if self.rect.left >= hit.rect.right or self.rect.right >= hit.rect.left:
+                self.rect.x -= self.velocityx - 1
+
+            self.velocityx = 0
+            self.velocityy = 0
 
         ### Will be killed if instances of playerbullets collide with instances
         hit_list = pygame.sprite.spritecollide(self, playerbullets, True, pygame.sprite.collide_mask)
@@ -209,6 +209,9 @@ class PlayerBullet(pygame.sprite.Sprite):
 
 class Shuttle(pygame.sprite.Sprite):
 
+    SPEED_MODIFIER = 10
+    MAX_COOLDOWN = 15
+
     def __init__(self, x, y, image):
         super().__init__()
 
@@ -241,8 +244,8 @@ class Shuttle(pygame.sprite.Sprite):
 
         hyp = math.sqrt(xdirr ** 2 + ydirr ** 2)
 
-        xvector = (xdirr / hyp) * 10
-        yvector = (ydirr / hyp) * 10
+        xvector = (xdirr / hyp) * Shuttle.SPEED_MODIFIER
+        yvector = (ydirr / hyp) * Shuttle.SPEED_MODIFIER
 
         return [xvector, yvector]
 
@@ -263,7 +266,7 @@ class Shuttle(pygame.sprite.Sprite):
         #bullet = PlayerBullet(self.rect.centerx, self.rect.centery, -vector[0], -vector[1])
 
         playerbullets.add(bullet)
-        self.firecooldown = 15
+        self.firecooldown = Shuttle.MAX_COOLDOWN
 
     def set_image(self):
         if 135 > self.get_angle() > 45:
